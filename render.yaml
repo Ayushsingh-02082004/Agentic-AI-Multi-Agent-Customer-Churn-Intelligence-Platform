@@ -1,0 +1,43 @@
+databases:
+  - name: customer_churn_db
+    databaseName: customer_churn_ai
+    user: postgres
+    plan: free
+
+services:
+  # FastAPI Backend Web Service
+  - type: web
+    name: customer-churn-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.api.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: customer_churn_db
+          property: connectionString
+      - key: CHROMA_DB_PATH
+        value: ./database/chroma
+      # Ollama API configurations (if you connect to a custom Ollama service)
+      - key: OLLAMA_API_KEY
+        sync: false
+      - key: LANGSMITH_API_KEY
+        sync: false
+      - key: LANGSMITH_TRACING
+        value: "true"
+      - key: LANGSMITH_PROJECT
+        value: customer-churn-agentic-ai
+
+  # Streamlit Frontend Web Service
+  - type: web
+    name: customer-churn-frontend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0
+    envVars:
+      - key: BACKEND_API_URL
+        fromService:
+          type: web
+          name: customer-churn-backend
+          property: url
+          path: /api
