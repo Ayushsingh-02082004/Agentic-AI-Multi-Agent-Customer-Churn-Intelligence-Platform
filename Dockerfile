@@ -13,5 +13,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Default command (can be overridden in docker-compose)
-CMD ["uvicorn", "backend.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+# Default command (uses shell form to allow variable expansion, falls back to 8000)
+CMD uvicorn backend.api.app:app --host 0.0.0.0 --port ${PORT:-8000}
