@@ -1,7 +1,6 @@
 databases:
   - name: customer_churn_db
     databaseName: customer_churn_ai
-    user: postgres
     plan: free
 
 services:
@@ -36,8 +35,5 @@ services:
     startCommand: streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0
     envVars:
       - key: BACKEND_API_URL
-        fromService:
-          type: web
-          name: customer-churn-backend
-          property: url
-          path: /api
+        value: http://customer-churn-backend:10000/api
+
