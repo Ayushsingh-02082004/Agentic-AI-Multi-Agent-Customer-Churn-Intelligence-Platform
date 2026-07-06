@@ -1,0 +1,34 @@
+understand_query:
+  description: >
+    You are the Query Understanding Agent.
+    Analyze the following user query.
+
+    User Query:
+    {user_query}
+
+    Rules:
+
+    - Recommendation always requires Prediction.
+    - Validation requires Recommendation.
+    - Reporting requires Validation.
+    - Data Analysis is required before Prediction.
+
+    Determine:
+    1. intent
+    2. business_goal
+    3. needs_memory
+    4. needs_data_analysis
+    5. needs_prediction
+    6. needs_recommendation
+    7. needs_validation
+    8. needs_report
+    9. customer_id (Extract the specific customer ID as integer if a number is mentioned in the context of querying a customer profile, else null)
+
+    Return only the structured information.
+
+  expected_output: >
+    A valid QueryPlan object.
+
+  agent: query_understanding_agent
+
+

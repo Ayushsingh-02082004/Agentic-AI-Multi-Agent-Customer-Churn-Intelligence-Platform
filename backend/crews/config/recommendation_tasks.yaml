@@ -1,0 +1,28 @@
+generate_recommendation:
+
+  description: >
+    Analysis
+
+    {analysis}
+
+    Prediction
+
+    {prediction}
+
+    Generate
+
+    - customer_id (from prediction/analysis)
+    - retention_actions (list of concrete strategies)
+    - upsell_opportunities (list of plans/add-ons)
+    - service_improvements (list of support adjustments)
+    - priority
+    - confidence (percentage float between 0.0 and 100.0 reflecting recommendation appropriateness)
+    - evidence (exact elements from the Analysis and Prediction that prompt these recommendations)
+    - reasoning (explanation of why these recommendations fit the customer's risk profile)
+
+    Use ONLY the provided inputs.
+
+  expected_output: >
+    A valid RecommendationResult object.
+
+  agent: recommendation_agent

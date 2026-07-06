@@ -1,0 +1,24 @@
+predict_customer:
+
+  description: >
+    Customer information:
+
+    {customer_data}
+
+    Return:
+
+    - customer_id
+    - risk_level
+    - confidence (percentage float between 0.0 and 100.0 reflecting prediction certainty)
+    - reasons (bulleted list of direct risk factors)
+    - evidence (exact customer values, e.g. tenure=5, support_tickets=4, that support the risk score)
+    - reasoning (detailed explanation of the rule-based risk evaluation)
+    - requires_recommendation
+
+    Use ONLY the provided customer information.
+    Do NOT invent values.
+
+  expected_output: >
+    A valid PredictionResult object.
+
+  agent: prediction_agent

@@ -1,0 +1,31 @@
+validate_output:
+
+  description: >
+
+    Analysis
+    {analysis}
+
+    Prediction
+    {prediction}
+
+    Recommendation
+    {recommendation}
+
+    Verify and populate:
+    - is_valid
+    - hallucination_detected
+    - confidence_verified
+    - numerical_validation
+    - evidence_available
+    - remarks
+    - confidence (percentage float between 0.0 and 100.0 reflecting validation trust score)
+    - evidence (specific inconsistencies or facts identified during verification)
+    - reasoning (detailed step-by-step logic of the audit process)
+
+    Use ONLY the supplied information.
+
+  expected_output: >
+
+    A valid ValidationResult object.
+
+  agent: validation_agent

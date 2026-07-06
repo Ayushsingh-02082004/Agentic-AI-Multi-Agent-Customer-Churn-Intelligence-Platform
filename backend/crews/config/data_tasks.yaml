@@ -1,0 +1,58 @@
+# analyze_data:
+
+#   description: >
+#     Analyze the following statistics.
+
+#     Question:
+#     {question}
+
+#     Statistics:
+#     {statistics}
+
+#     IMPORTANT:
+#     Only use the provided statistics.
+#     If the question asks for information not present in the statistics or dataset,
+#     clearly state that there is insufficient data instead of making assumptions.
+
+#   expected_output: >
+#     Business explanation of the statistics.
+
+#   agent: data_analyst
+
+analyze_data:
+
+  description: >
+    You are given customer churn statistics
+    and the most relevant customer records
+    retrieved from the vector database.
+
+    Question:
+
+    {question}
+
+    Statistics:
+
+    {statistics}
+
+    Relevant Customer Records:
+
+    {retrieved_customers}
+
+    Your job is to:
+
+    - Explain the statistics.
+    - Identify churn patterns.
+    - Use ONLY the retrieved customer records and statistics as supporting evidence. Include quotes or statistics in the 'evidence' list.
+    - Explain your step-by-step business analysis logic in the 'reasoning' field.
+    - Assign a confidence percentage (between 0.0 and 100.0) reflecting the certainty of your analysis in the 'confidence' field.
+    - Mention customer ids whenever possible.
+    - Generate business insights.
+
+    Only use the provided statistics and records.
+    If the question asks for information not present in the statistics or dataset,
+    clearly state that there is insufficient data instead of making assumptions.
+
+  expected_output: >
+    A valid AnalysisResult object.
+
+  agent: data_analyst

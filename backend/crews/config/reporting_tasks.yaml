@@ -1,0 +1,34 @@
+generate_report:
+
+  description: >
+
+    Analysis
+    {analysis}
+
+    Prediction
+    {prediction}
+
+    Recommendation
+    {recommendation}
+
+    Validation
+    {validation}
+
+    Produce
+
+    - executive_summary
+    - key_findings
+    - risk_assessment
+    - recommendations
+    - validation_summary
+    - overall_confidence (percentage float between 0.0 and 100.0)
+    - evidence (key metrics and customer details that justify findings)
+    - reasoning (explanation of how data led to final executive conclusions)
+
+    Use ONLY the supplied information.
+
+  expected_output: >
+
+    A valid ReportResult object.
+
+  agent: reporting_agent
