@@ -28,8 +28,37 @@ def get_app_connection():
     )
 
 def init_db():
+    db_url = os.getenv("DATABASE_URL")
+    if db_url:
+        print("Connecting to database via DATABASE_URL...")
+        try:
+            app_conn = psycopg.connect(db_url, autocommit=True)
+            app_cur = app_conn.cursor()
+            app_cur.execute("""
+                CREATE TABLE IF NOT EXISTS memory (
+                    session_id UUID PRIMARY KEY,
+                    user_query TEXT,
+                    query_plan JSONB,
+                    retrieval_context JSONB,
+                    analysis_result JSONB,
+                    prediction_result JSONB,
+                    recommendation_result JSONB,
+                    validation_result JSONB,
+                    report_result JSONB,
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            print("Table 'memory' verified/created successfully via DATABASE_URL.")
+            app_cur.close()
+            app_conn.close()
+            return
+        except Exception as e:
+            print(f"Failed to initialize database via DATABASE_URL: {e}")
+            print("Falling back to standard connection credentials...")
+
     db_name = os.getenv("DATABASE_NAME", "customer_churn_ai")
     print(f"Connecting to Postgres to verify DB '{db_name}' exists...")
+
     
     # 1. Create DB if not exists
     try:

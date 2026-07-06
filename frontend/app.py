@@ -12,8 +12,11 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+import os
+
 # API endpoint URL
-API_URL = "http://localhost:8000/api"
+API_URL = os.getenv("BACKEND_API_URL", "http://localhost:8000/api")
+
 
 # Design and style customizations
 st.markdown("""

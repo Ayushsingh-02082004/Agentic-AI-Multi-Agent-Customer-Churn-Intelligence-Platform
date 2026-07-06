@@ -8,6 +8,9 @@ ROOT = Path(__file__).resolve().parents[3]
 load_dotenv(ROOT / ".env")
 
 def get_connection():
+    db_url = os.getenv("DATABASE_URL")
+    if db_url:
+        return psycopg.connect(db_url)
     return psycopg.connect(
         host=os.getenv("DATABASE_HOST"),
         port=os.getenv("DATABASE_PORT"),
@@ -15,6 +18,7 @@ def get_connection():
         user=os.getenv("DATABASE_USER"),
         password=os.getenv("DATABASE_PASSWORD")
     )
+
 
 
 # print("HOST:", os.getenv("DATABASE_HOST"))

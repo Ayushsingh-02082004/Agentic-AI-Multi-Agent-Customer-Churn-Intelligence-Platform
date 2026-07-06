@@ -35,7 +35,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+def startup_event():
+    # 1. Run PostgreSQL table migrations
+    from database.init_db import init_db
+    try:
+        print("Running PostgreSQL database table setup...")
+        init_db()
+    except Exception as e:
+        print(f"Startup PostgreSQL setup failed: {e}")
+        
+    # 2. Automatically ingest ChromaDB vector database if empty
+    try:
+        print("Checking ChromaDB collection size...")
+        db = ChromaService()
+        metadatas = db.get_all_metadata()
+        if len(metadatas) == 0:
+            print("ChromaDB vector store is empty. Starting dataset ingestion...")
+            ingestion = IngestionService()
+            ingestion.ingest()
+        else:
+            print(f"ChromaDB vector store is populated with {len(metadatas)} customer profiles.")
+    except Exception as e:
+        print(f"Startup ChromaDB initialization failed: {e}")
+
 # Request & Response schemas
+
 class WorkflowRequest(BaseModel):
     query: str
     session_id: Optional[str] = None
