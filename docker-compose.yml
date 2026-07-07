@@ -1,47 +1,35 @@
 services:
-  db:
-    image: postgres:15-alpine
-    container_name: customer_churn_db
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: customer_churn_app
     restart: always
-    environment:
-      POSTGRES_DB: customer_churn_ai
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
     ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-  backend:
-    build: .
-    container_name: customer_churn_backend
-    restart: always
-    command: uvicorn backend.api.app:app --host 0.0.0.0 --port 8000
-    ports:
-      - "8000:8000"
+      - "8501:8501"   # Streamlit (public-facing)
+      - "8000:8000"   # FastAPI  (for local debugging/testing)
     environment:
-      DATABASE_URL: postgresql://postgres:root@db:5432/customer_churn_ai
+      # PostgreSQL — runs inside the same container
+      DATABASE_HOST: localhost
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: customer_churn_ai
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: root
+      # LLM / tracing keys (loaded from local .env)
       OLLAMA_API_KEY: ${OLLAMA_API_KEY}
       LANGSMITH_API_KEY: ${LANGSMITH_API_KEY}
       LANGSMITH_TRACING: "true"
       LANGSMITH_PROJECT: customer-churn-agentic-ai
+      CREWAI_TRACING_ENABLED: "true"
+      # ChromaDB path inside the container
       CHROMA_DB_PATH: /app/database/chroma
+      # Streamlit talks to FastAPI on the same container
+      BACKEND_API_URL: http://localhost:8000/api
+      # Railway-compatible PORT (Streamlit listens here)
+      PORT: "8501"
     volumes:
+      - pgdata:/var/lib/postgresql
       - chromadata:/app/database/chroma
-    depends_on:
-      - db
-
-  frontend:
-    build: .
-    container_name: customer_churn_frontend
-    restart: always
-    command: streamlit run frontend/app.py --server.port 8501 --server.address 0.0.0.0
-    ports:
-      - "8501:8501"
-    environment:
-      BACKEND_API_URL: http://backend:8000/api
-    depends_on:
-      - backend
 
 volumes:
   pgdata:

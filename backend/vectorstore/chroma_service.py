@@ -1,12 +1,14 @@
+import os
 import chromadb
 
 
 class ChromaService:
 
     def __init__(self):
+        chroma_path = os.getenv("CHROMA_DB_PATH", "database/chroma")
 
         self.client = chromadb.PersistentClient(
-            path="database/chroma"
+            path=chroma_path
         )
 
         self.collection = self.client.get_or_create_collection(

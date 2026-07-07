@@ -1,0 +1,15 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+database/chroma/
+*.db
+*.sqlite3
+.idea/
+.vscode/
+.DS_Store
+test_chroma_tmp/
+.cache/
+.git
+*.log

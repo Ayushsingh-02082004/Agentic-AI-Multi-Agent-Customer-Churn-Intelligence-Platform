@@ -10,10 +10,23 @@ __pycache__/
 
 .chromadb/
 
+# ChromaDB persistent database (old format causes chromadb 1.x migration errors)
+database/chroma/
+
 *.db
+*.sqlite3
 
 .idea/
 
 .vscode/
 
 .DS_Store
+
+# Local ChromaDB test directories
+test_chroma_tmp/
+
+# HuggingFace model cache
+.cache/
+
+# PDF reports
+*.pdf

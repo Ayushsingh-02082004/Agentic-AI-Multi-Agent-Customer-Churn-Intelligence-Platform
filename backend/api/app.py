@@ -1,6 +1,7 @@
 import os
 import uuid
 import tempfile
+import threading
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 from fastapi import FastAPI, HTTPException, Query, BackgroundTasks
@@ -43,21 +44,46 @@ def startup_event():
         print("Running PostgreSQL database table setup...")
         init_db()
     except Exception as e:
+        import traceback
         print(f"Startup PostgreSQL setup failed: {e}")
+        traceback.print_exc()
         
-    # 2. Automatically ingest ChromaDB vector database if empty
-    try:
-        print("Checking ChromaDB collection size...")
-        db = ChromaService()
-        metadatas = db.get_all_metadata()
-        if len(metadatas) == 0:
-            print("ChromaDB vector store is empty. Starting dataset ingestion...")
-            ingestion = IngestionService()
-            ingestion.ingest()
-        else:
-            print(f"ChromaDB vector store is populated with {len(metadatas)} customer profiles.")
-    except Exception as e:
-        print(f"Startup ChromaDB initialization failed: {e}")
+    # 2. Trigger ChromaDB ingestion in a background thread so the server
+    #    starts immediately (Render health checks won't time out waiting for
+    #    the ~90 MB sentence-transformers model download)
+    def _ingest_if_empty():
+        try:
+            print("Checking ChromaDB collection size...")
+            db = ChromaService()
+            metadatas = db.get_all_metadata()
+            if len(metadatas) == 0:
+                print("ChromaDB vector store is empty. Starting dataset ingestion...")
+                ingestion = IngestionService()
+                ingestion.ingest()
+                print("ChromaDB ingestion completed successfully.")
+            else:
+                print(f"ChromaDB vector store is populated with {len(metadatas)} customer profiles.")
+        except Exception as e:
+            import traceback
+            print(f"Startup ChromaDB initialization failed: {e}")
+            traceback.print_exc()
+
+    t = threading.Thread(target=_ingest_if_empty, daemon=True)
+    t.start()
+
+
+@app.get("/")
+def root():
+    """Root health check endpoint."""
+    return {"status": "ok", "service": "BNP Paribas Churn Intelligence API", "version": "1.0.0"}
+
+
+@app.get("/health")
+def health():
+    """Detailed health check endpoint for Render and load balancers."""
+    return {"status": "healthy"}
+
+
 
 # Request & Response schemas
 
